@@ -15,7 +15,7 @@ and a downloadable PDF report with citations.
 
 ## Status
 
-🚧 **Under active development.** Session 1 (FastAPI wrapper over the `oncothresh` API) in progress.
+🚧 **Under active development.** The FastAPI backend (a REST layer over the `oncothresh` library) is in progress.
 
 ## Architecture
 
@@ -29,8 +29,8 @@ and a downloadable PDF report with citations.
 ## Relationship to `oncothresh`
 
 `oncothresh-web` depends on `oncothresh` via `pip` and pins an explicit version. The library owns the
-science and its own release cadence; this repo owns the UI. See the compatibility note in the backend
-once Session 1 lands.
+science and its own release cadence; this repo owns the UI. See the backend README for the
+version compatibility table.
 
 ## Citing
 
