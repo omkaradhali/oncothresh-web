@@ -1,6 +1,8 @@
 """Endpoint tests: every method returns 200 with a version-stamped envelope, and bad
 input is rejected as 422 rather than crashing."""
 
+from importlib.metadata import version
+
 from tests.conftest import Y_PRED_2, Y_TRUE
 
 
@@ -16,12 +18,14 @@ def test_health(client):
     assert client.get("/health").json() == {"status": "ok"}
 
 
-def test_version_reports_installed_library(client):
+def test_version_reports_installed_distributions(client):
     body = client.get("/version").json()
-    # Provenance must reflect the installed distribution (0.1.1), not the library's
-    # stale __version__ attribute (0.1.0).
+    # Both versions must come from installed distribution metadata, not a hardcoded
+    # constant, so they can never drift from the packaged versions.
+    assert body["oncothresh_version"] == version("oncothresh")
+    assert body["oncothresh_web_version"] == version("oncothresh-web")
+    # oncothresh is pinned exactly, so this doubles as a concrete guard on the pin.
     assert body["oncothresh_version"] == "0.1.1"
-    assert body["oncothresh_web_version"] == "0.1.0"
 
 
 def test_evaluate(client, dataset):

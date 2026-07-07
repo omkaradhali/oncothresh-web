@@ -4,10 +4,9 @@ Every API response carries both the oncothresh-web version and the exact oncothr
 version that produced the numbers, so a result can always be traced back to the code
 that generated it.
 
-We read the oncothresh version from installed *distribution* metadata via
-``importlib.metadata``, NOT from ``oncothresh.__version__``. At the time of writing the
-library's ``__version__`` attribute is stale (reports 0.1.0 while the published
-distribution is 0.1.1), so the attribute is not a reliable provenance source.
+Both versions come from installed *distribution* metadata via ``importlib.metadata``
+rather than a hardcoded module attribute, because a hand-written attribute can drift
+from the packaged version in pyproject.toml while distribution metadata cannot.
 """
 
 from importlib.metadata import PackageNotFoundError, version
