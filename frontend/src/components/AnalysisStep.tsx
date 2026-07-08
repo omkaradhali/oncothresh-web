@@ -52,6 +52,30 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
           Loaded {dataset.n_rows.toLocaleString()} rows. Predictions are classified positive at or
           above this cutoff.
         </p>
+
+        <details className="callout">
+          <summary>What is a threshold, and why is it on a 0–1 scale?</summary>
+          <p>
+            The model gives each sample a continuous score (here, estimated tumour cellularity). A
+            <strong> threshold</strong> is the cutoff that turns that score into a yes/no decision: a
+            sample is called <em>positive</em> when its score is at or above the threshold. For
+            example, a 20% cellularity cutoff decides which specimens have enough tumour to run a
+            molecular assay.
+          </p>
+          <p>
+            Where you set it is a <strong>clinical choice, not just a statistical one</strong>.
+            Lowering the threshold catches more true positives (higher sensitivity) but adds false
+            positives (lower specificity); raising it does the reverse. The same model can look
+            excellent or poor depending on the cutoff, which is exactly why validating around the
+            threshold matters.
+          </p>
+          <p>
+            Scores and the threshold use a <strong>0–1 fraction scale</strong>, the same scale as the
+            underlying proportion: <code>0.20 = 20%</code>, <code>0.30 = 30%</code>. So enter a 20%
+            tumour-cellularity rule as <code>0.20</code>.
+          </p>
+        </details>
+
         <div className="field-row" style={{ marginTop: "1rem", alignItems: "end" }}>
           <div>
             <label htmlFor="threshold">Threshold</label>
@@ -64,6 +88,9 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
               value={threshold}
               onChange={(e) => setThreshold(Number(e.target.value))}
             />
+            <p className="hint" style={{ marginTop: "0.35rem" }}>
+              = {+(threshold * 100).toFixed(2)}% cellularity
+            </p>
           </div>
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <button onClick={run} disabled={busy}>

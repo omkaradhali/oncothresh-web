@@ -304,6 +304,57 @@ button.secondary {
   margin-top: 0.5rem;
 }
 
+/* Collapsible explainer inside a step card. */
+.callout {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.callout summary {
+  cursor: pointer;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--accent);
+  list-style: none;
+}
+
+.callout summary::-webkit-details-marker {
+  display: none;
+}
+
+.callout summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: transform 0.12s ease;
+}
+
+.callout[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.callout p {
+  margin: 0 0.9rem 0.8rem;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.callout p:first-of-type {
+  margin-top: 0.2rem;
+}
+
+.callout code {
+  background: #fff;
+  color: var(--accent);
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
 .provenance {
   margin-top: 2rem;
   padding-top: 1rem;
