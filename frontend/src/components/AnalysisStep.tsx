@@ -8,8 +8,13 @@
 import { useState } from "react";
 import { ApiError, evaluate, thresholdSensitivity } from "../api/client";
 import type { ParsedDataset, ResponseMeta, ThresholdResult, ThresholdSensitivityResult } from "../api/types";
+import { domain, formatPercentReadout } from "../config";
 import MetricsPanel from "./MetricsPanel";
 import SensitivityChart from "./SensitivityChart";
+
+// Fallback example when a deployment hasn't configured a domain-specific one.
+const GENERIC_EXAMPLE =
+  "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
 
 interface Props {
   dataset: ParsedDataset;
@@ -56,11 +61,9 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
         <details className="callout">
           <summary>What is a threshold, and why is it on a 0–1 scale?</summary>
           <p>
-            The model gives each sample a continuous score (here, estimated tumour cellularity). A
-            <strong> threshold</strong> is the cutoff that turns that score into a yes/no decision: a
-            sample is called <em>positive</em> when its score is at or above the threshold. For
-            example, a 20% cellularity cutoff decides which specimens have enough tumour to run a
-            molecular assay.
+            The model gives each sample a continuous score. A <strong>threshold</strong> is the cutoff
+            that turns that score into a yes/no decision: a sample is called <em>positive</em> when
+            its score is at or above the threshold. {domain.exampleUseCase || GENERIC_EXAMPLE}
           </p>
           <p>
             Where you set it is a <strong>clinical choice, not just a statistical one</strong>.
@@ -72,7 +75,7 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
           <p>
             Scores and the threshold use a <strong>0–1 fraction scale</strong>, the same scale as the
             underlying proportion: <code>0.20 = 20%</code>, <code>0.30 = 30%</code>. So enter a 20%
-            tumour-cellularity rule as <code>0.20</code>.
+            rule as <code>0.20</code>.
           </p>
         </details>
 
@@ -89,7 +92,7 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
               onChange={(e) => setThreshold(Number(e.target.value))}
             />
             <p className="hint" style={{ marginTop: "0.35rem" }}>
-              = {+(threshold * 100).toFixed(2)}% cellularity
+              {formatPercentReadout(threshold)}
             </p>
           </div>
           <div style={{ display: "flex", gap: "0.75rem" }}>
