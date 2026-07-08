@@ -1,4 +1,5 @@
-"""Version resolution for provenance stamping.
+"""
+Version resolution for provenance stamping.
 
 Every API response carries both the oncothresh-web version and the exact oncothresh
 version that produced the numbers, so a result can always be traced back to the code
