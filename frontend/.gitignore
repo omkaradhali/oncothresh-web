@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+*.local
+.vite/
+
+# tsc -b (composite build) emits these from the node-side project
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

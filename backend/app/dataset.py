@@ -1,4 +1,5 @@
-"""CSV parsing and evaluator construction.
+"""
+CSV parsing and evaluator construction.
 
 Isolates every point where user input meets the library, so validation errors are
 turned into clean HTTP 422 responses in exactly one place. The library raises
@@ -48,7 +49,8 @@ def parse_csv(
     message that names the offending column or row.
     """
     try:
-        text = raw.decode("utf-8-sig")  # utf-8-sig transparently strips a BOM if present
+        # utf-8-sig transparently strips a BOM if present
+        text = raw.decode("utf-8-sig")
     except UnicodeDecodeError as exc:
         raise HTTPException(status_code=422, detail="File is not valid UTF-8 text.") from exc
 
@@ -67,6 +69,7 @@ def parse_csv(
     y_true: list[float] = []
     y_pred: list[float] = []
     group: list[str] = []
+
     # Data rows start at line 2 (line 1 is the header), which is what a user sees in a spreadsheet.
     for line_no, row in enumerate(reader, start=2):
         try:

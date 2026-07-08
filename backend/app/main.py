@@ -1,4 +1,5 @@
-"""FastAPI application entry point.
+"""
+FastAPI application entry point.
 
 Wires up CORS, the evaluation router, the CSV-parsing endpoint, and health/version
 routes. The app itself holds no state - every request carries its own data - so it
@@ -19,7 +20,7 @@ from app.schemas import ApiResponse, ParsedDataset, ResponseMeta
 app = FastAPI(
     title="oncothresh-web API",
     version=oncothresh_web_version(),
-    summary="REST layer over the oncothresh library for threshold-aware oncology AI validation.",
+    summary="REST layer over the oncothresh library for threshold aware oncology AI validation.",
     description=(
         "A thin, stateless wrapper over the oncothresh Python library. Every numerical "
         f"result is produced by oncothresh (currently {oncothresh_version()}) and each "
