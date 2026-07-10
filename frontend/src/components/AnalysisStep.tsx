@@ -156,17 +156,17 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {/* Each panel mounts once visited and persists; hidden keeps it in the DOM (and its
                 fetched result) while inactive, so switching tabs never refetches. */}
             {visited.has("sensitivity") && (
-              <div hidden={activeTab !== "sensitivity"} role="tabpanel">
+              <div className="tabpanel" hidden={activeTab !== "sensitivity"} role="tabpanel">
                 <SensitivityPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
             {visited.has("calibration") && (
-              <div hidden={activeTab !== "calibration"} role="tabpanel">
+              <div className="tabpanel" hidden={activeTab !== "calibration"} role="tabpanel">
                 <CalibrationPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
             {visited.has("decision-curve") && (
-              <div hidden={activeTab !== "decision-curve"} role="tabpanel">
+              <div className="tabpanel" hidden={activeTab !== "decision-curve"} role="tabpanel">
                 <DecisionCurvePanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
