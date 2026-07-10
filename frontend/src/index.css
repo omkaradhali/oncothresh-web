@@ -177,6 +177,13 @@ h3 {
   border-bottom-color: var(--accent);
 }
 
+/* Reserve room for a chart so a tab's brief "Computing…" state can't collapse the panel.
+   Without this the document shrinks on a tab's first open, the browser clamps the scroll
+   position toward the top, and the chart lands off-screen when it finishes loading. */
+.tabpanel {
+  min-height: 440px;
+}
+
 /* --- form controls -------------------------------------------------------- */
 
 label {
