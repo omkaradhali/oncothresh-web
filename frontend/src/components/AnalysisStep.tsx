@@ -1,20 +1,30 @@
 /**
  * Step 2: pick a clinical threshold and compute results.
  *
- * Fires `/evaluate` and `/threshold-sensitivity` together against the parsed dataset, then
- * renders the metrics panel and the sensitivity chart. Each recompute restamps provenance.
+ * "Evaluate" fires only `/evaluate` — the headline metrics that anchor the whole Results view.
+ * The deeper analyses live behind tabs and each fetches its own endpoint lazily, the first time
+ * its tab is opened, keyed on the committed threshold (`metrics.threshold`). This keeps the page
+ * short and avoids firing every endpoint on every recompute.
  */
 
-import { useState } from "react";
-import { ApiError, evaluate, thresholdSensitivity } from "../api/client";
-import type { ParsedDataset, ResponseMeta, ThresholdResult, ThresholdSensitivityResult } from "../api/types";
+import { useMemo, useState } from "react";
+import { ApiError, evaluate, type DatasetArrays } from "../api/client";
+import type { ParsedDataset, ResponseMeta, ThresholdResult } from "../api/types";
 import { domain, formatPercentReadout } from "../config";
+import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
-import SensitivityChart from "./SensitivityChart";
+import SensitivityPanel from "./SensitivityPanel";
 
 // Fallback example when a deployment hasn't configured a domain-specific one.
 const GENERIC_EXAMPLE =
   "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
+
+type TabId = "sensitivity" | "decision-curve";
+
+const TABS: { id: TabId; label: string }[] = [
+  { id: "sensitivity", label: "Threshold sensitivity" },
+  { id: "decision-curve", label: "Decision curve" },
+];
 
 interface Props {
   dataset: ParsedDataset;
@@ -27,25 +37,36 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<ThresholdResult | null>(null);
-  const [sensitivity, setSensitivity] = useState<ThresholdSensitivityResult | null>(null);
+  const [activeTab, setActiveTab] = useState<TabId>("sensitivity");
+  // Tabs render lazily: a panel mounts once visited, then stays mounted (hidden when inactive)
+  // so switching tabs doesn't refetch. Visiting starts empty and grows as the user explores.
+  const [visited, setVisited] = useState<Set<TabId>>(new Set());
+
+  // Stable identity for the panels' fetch dependencies; the dataset itself never mutates.
+  const arrays: DatasetArrays = useMemo(
+    () => ({ y_true: dataset.y_true, y_pred: dataset.y_pred }),
+    [dataset],
+  );
 
   async function run() {
     setBusy(true);
     setError(null);
-    const arrays = { y_true: dataset.y_true, y_pred: dataset.y_pred };
     try {
-      const [evalRes, sensRes] = await Promise.all([
-        evaluate(arrays, threshold),
-        thresholdSensitivity(arrays, threshold),
-      ]);
-      setMetrics(evalRes.data);
-      setSensitivity(sensRes.data);
-      onMeta(evalRes.meta);
+      const res = await evaluate(arrays, threshold);
+      setMetrics(res.data);
+      onMeta(res.meta);
+      // Reveal the active tab immediately; other tabs stay lazy until opened.
+      setVisited(new Set([activeTab]));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Computation failed.");
     } finally {
       setBusy(false);
     }
+  }
+
+  function openTab(id: TabId) {
+    setActiveTab(id);
+    setVisited((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
   }
 
   return (
@@ -108,23 +129,42 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
       </section>
 
       {metrics && (
-        <section className="card">
-          <span className="step-label">Results · Threshold {metrics.threshold}</span>
-          <h2>Classification metrics</h2>
-          <MetricsPanel result={metrics} />
-        </section>
-      )}
+        <>
+          <section className="card">
+            <span className="step-label">Results · Threshold {metrics.threshold}</span>
+            <h2>Classification metrics</h2>
+            <MetricsPanel result={metrics} />
+          </section>
 
-      {sensitivity && (
-        <section className="card">
-          <span className="step-label">Results</span>
-          <h2>Threshold sensitivity</h2>
-          <p className="hint">
-            How sensitivity and specificity respond as the threshold moves ±{sensitivity.delta}
-            around the nominal value.
-          </p>
-          <SensitivityChart result={sensitivity} />
-        </section>
+          <section className="card">
+            <div className="tabs" role="tablist">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  className={`tab${activeTab === tab.id ? " active" : ""}`}
+                  onClick={() => openTab(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Each panel mounts once visited and persists; hidden keeps it in the DOM (and its
+                fetched result) while inactive, so switching tabs never refetches. */}
+            {visited.has("sensitivity") && (
+              <div hidden={activeTab !== "sensitivity"} role="tabpanel">
+                <SensitivityPanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("decision-curve") && (
+              <div hidden={activeTab !== "decision-curve"} role="tabpanel">
+                <DecisionCurvePanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+          </section>
+        </>
       )}
     </>
   );

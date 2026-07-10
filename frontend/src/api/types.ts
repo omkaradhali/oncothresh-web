@@ -61,3 +61,18 @@ export interface ThresholdSensitivityResult {
   /** Index into the arrays marking the nominal (user-chosen) threshold. */
   nominal_index: number;
 }
+
+// --- /decision-curve ---------------------------------------------------------
+
+/**
+ * Net-benefit curves from Decision Curve Analysis. `net_benefit_none` is omitted because it
+ * is always 0 by definition; the chart draws it as a y=0 reference line.
+ */
+export interface DecisionCurveResult {
+  clinical_threshold: number;
+  prevalence: number;
+  /** Threshold-probability (pt) values swept along the x-axis. */
+  thresholds: number[];
+  net_benefit_model: number[];
+  net_benefit_all: number[];
+}

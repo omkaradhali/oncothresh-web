@@ -8,6 +8,7 @@
 
 import type {
   ApiResponse,
+  DecisionCurveResult,
   ParsedDataset,
   ResponseMeta,
   ThresholdResult,
@@ -117,5 +118,18 @@ export function thresholdSensitivity(
     threshold,
     delta,
     step,
+  });
+}
+
+export function decisionCurve(
+  data: DatasetArrays,
+  clinicalThreshold: number,
+  thresholds?: number[],
+): Promise<ApiResponse<DecisionCurveResult>> {
+  // The backend binarises y_true at `clinical_threshold`, then sweeps `thresholds` (pt) for it.
+  return postJson<DecisionCurveResult>("/decision-curve", {
+    ...data,
+    clinical_threshold: clinicalThreshold,
+    thresholds: thresholds ?? null,
   });
 }
