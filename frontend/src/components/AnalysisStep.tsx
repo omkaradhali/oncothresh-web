@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { ApiError, evaluate, type DatasetArrays } from "../api/client";
 import type { ParsedDataset, ResponseMeta, ThresholdResult } from "../api/types";
 import { domain, formatPercentReadout } from "../config";
+import CalibrationPanel from "./CalibrationPanel";
 import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
 import SensitivityPanel from "./SensitivityPanel";
@@ -19,10 +20,11 @@ import SensitivityPanel from "./SensitivityPanel";
 const GENERIC_EXAMPLE =
   "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
 
-type TabId = "sensitivity" | "decision-curve";
+type TabId = "sensitivity" | "calibration" | "decision-curve";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "sensitivity", label: "Threshold sensitivity" },
+  { id: "calibration", label: "Calibration" },
   { id: "decision-curve", label: "Decision curve" },
 ];
 
@@ -156,6 +158,11 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {visited.has("sensitivity") && (
               <div hidden={activeTab !== "sensitivity"} role="tabpanel">
                 <SensitivityPanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("calibration") && (
+              <div hidden={activeTab !== "calibration"} role="tabpanel">
+                <CalibrationPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
             {visited.has("decision-curve") && (

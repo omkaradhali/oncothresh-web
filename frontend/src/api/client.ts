@@ -8,6 +8,7 @@
 
 import type {
   ApiResponse,
+  BoundaryCalibrationResult,
   DecisionCurveResult,
   ParsedDataset,
   ResponseMeta,
@@ -118,6 +119,22 @@ export function thresholdSensitivity(
     threshold,
     delta,
     step,
+  });
+}
+
+export function boundaryCalibration(
+  data: DatasetArrays,
+  threshold: number,
+  window = 0.1,
+  nBins = 10,
+): Promise<ApiResponse<BoundaryCalibrationResult>> {
+  // Assesses calibration only within [threshold - window, threshold + window], the zone where
+  // scores actually decide the clinical call, then bins that zone into `nBins` for the diagram.
+  return postJson<BoundaryCalibrationResult>("/boundary-calibration", {
+    ...data,
+    threshold,
+    window,
+    n_bins: nBins,
   });
 }
 

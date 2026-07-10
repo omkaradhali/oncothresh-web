@@ -76,3 +76,32 @@ export interface DecisionCurveResult {
   net_benefit_model: number[];
   net_benefit_all: number[];
 }
+
+// --- /boundary-calibration ---------------------------------------------------
+
+/**
+ * Reliability of the scores inside the boundary zone [threshold - window, threshold + window].
+ * The per-bin mean arrays carry `null` for bins that caught no samples, so a reliability diagram
+ * can skip those points rather than drawing them at zero.
+ */
+export interface BoundaryCalibrationResult {
+  threshold: number;
+  /** Half-width of the boundary zone; the zone spans [threshold - window, threshold + window]. */
+  window: number;
+  /** Samples whose predicted score fell inside the boundary zone. */
+  n_samples: number;
+  /** Boundary Expected Calibration Error, in score units (0.03 = 3 percentage points). NaN if empty. */
+  ece: number;
+  /** True when the zone averages at least 5 samples per bin; false flags a too-noisy ECE. */
+  is_reliable: boolean;
+  /** n_bins + 1 equal-width bin boundaries within the zone. */
+  bin_edges: number[];
+  /** Midpoint of each bin. */
+  bin_centers: number[];
+  /** Mean predicted score per bin; `null` for an empty bin. */
+  bin_mean_predicted: (number | null)[];
+  /** Mean actual outcome per bin; `null` for an empty bin. */
+  bin_mean_actual: (number | null)[];
+  /** Sample count per bin. */
+  bin_counts: number[];
+}
