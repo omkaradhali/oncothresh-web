@@ -77,6 +77,13 @@ export interface DecisionCurveResult {
   net_benefit_all: number[];
 }
 
+// --- /multi-threshold-report -------------------------------------------------
+
+/** The same classification metrics computed at each of several thresholds, for a sweep chart. */
+export interface MultiThresholdReport {
+  results: ThresholdResult[];
+}
+
 // --- /boundary-calibration ---------------------------------------------------
 
 /**

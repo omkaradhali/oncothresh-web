@@ -14,16 +14,18 @@ import { domain, formatPercentReadout } from "../config";
 import CalibrationPanel from "./CalibrationPanel";
 import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
+import MultiThresholdPanel from "./MultiThresholdPanel";
 import SensitivityPanel from "./SensitivityPanel";
 
 // Fallback example when a deployment hasn't configured a domain-specific one.
 const GENERIC_EXAMPLE =
   "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
 
-type TabId = "sensitivity" | "calibration" | "decision-curve";
+type TabId = "sensitivity" | "metrics-sweep" | "calibration" | "decision-curve";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "sensitivity", label: "Threshold sensitivity" },
+  { id: "metrics-sweep", label: "Metrics vs threshold" },
   { id: "calibration", label: "Calibration" },
   { id: "decision-curve", label: "Decision curve" },
 ];
@@ -158,6 +160,11 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {visited.has("sensitivity") && (
               <div className="tabpanel" hidden={activeTab !== "sensitivity"} role="tabpanel">
                 <SensitivityPanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("metrics-sweep") && (
+              <div className="tabpanel" hidden={activeTab !== "metrics-sweep"} role="tabpanel">
+                <MultiThresholdPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
             {visited.has("calibration") && (
