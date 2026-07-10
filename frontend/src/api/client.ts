@@ -10,6 +10,7 @@ import type {
   ApiResponse,
   BoundaryCalibrationResult,
   DecisionCurveResult,
+  MultiThresholdReport,
   ParsedDataset,
   ResponseMeta,
   ThresholdResult,
@@ -120,6 +121,14 @@ export function thresholdSensitivity(
     delta,
     step,
   });
+}
+
+export function multiThresholdReport(
+  data: DatasetArrays,
+  thresholds: number[],
+): Promise<ApiResponse<MultiThresholdReport>> {
+  // The caller supplies the full sweep of thresholds; the backend evaluates every metric at each.
+  return postJson<MultiThresholdReport>("/multi-threshold-report", { ...data, thresholds });
 }
 
 export function boundaryCalibration(
