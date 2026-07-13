@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { ApiError, evaluate, type DatasetArrays } from "../api/client";
 import type { ParsedDataset, ResponseMeta, ThresholdResult } from "../api/types";
 import { domain, formatPercentReadout } from "../config";
+import BootstrapPanel from "./BootstrapPanel";
 import CalibrationPanel from "./CalibrationPanel";
 import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
@@ -21,13 +22,14 @@ import SensitivityPanel from "./SensitivityPanel";
 const GENERIC_EXAMPLE =
   "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
 
-type TabId = "sensitivity" | "metrics-sweep" | "calibration" | "decision-curve";
+type TabId = "sensitivity" | "metrics-sweep" | "calibration" | "decision-curve" | "bootstrap-ci";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "sensitivity", label: "Threshold sensitivity" },
   { id: "metrics-sweep", label: "Metrics vs threshold" },
   { id: "calibration", label: "Calibration" },
   { id: "decision-curve", label: "Decision curve" },
+  { id: "bootstrap-ci", label: "Confidence intervals" },
 ];
 
 interface Props {
@@ -175,6 +177,11 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {visited.has("decision-curve") && (
               <div className="tabpanel" hidden={activeTab !== "decision-curve"} role="tabpanel">
                 <DecisionCurvePanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("bootstrap-ci") && (
+              <div className="tabpanel" hidden={activeTab !== "bootstrap-ci"} role="tabpanel">
+                <BootstrapPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
           </section>

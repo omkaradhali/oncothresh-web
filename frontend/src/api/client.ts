@@ -8,6 +8,7 @@
 
 import type {
   ApiResponse,
+  BootstrapResult,
   BoundaryCalibrationResult,
   DecisionCurveResult,
   MultiThresholdReport,
@@ -129,6 +130,22 @@ export function multiThresholdReport(
 ): Promise<ApiResponse<MultiThresholdReport>> {
   // The caller supplies the full sweep of thresholds; the backend evaluates every metric at each.
   return postJson<MultiThresholdReport>("/multi-threshold-report", { ...data, thresholds });
+}
+
+export function bootstrapCi(
+  data: DatasetArrays,
+  threshold: number,
+  nBootstrap = 1000,
+  confidence = 0.95,
+): Promise<ApiResponse<BootstrapResult>> {
+  // The backend resamples the dataset `nBootstrap` times to put a confidence interval around
+  // every metric at this one threshold. Method (BCa) and random_state keep the library defaults.
+  return postJson<BootstrapResult>("/bootstrap-ci", {
+    ...data,
+    threshold,
+    n_bootstrap: nBootstrap,
+    confidence,
+  });
 }
 
 export function boundaryCalibration(
