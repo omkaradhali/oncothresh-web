@@ -408,6 +408,19 @@ button.secondary {
   margin-top: 0.5rem;
 }
 
+/* Custom recharts tooltip body (e.g. the forest plot). */
+.chart-tooltip {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.chart-tooltip .hint {
+  margin-top: 0;
+}
+
 /* Collapsible explainer inside a step card. */
 .callout {
   margin-top: 1rem;

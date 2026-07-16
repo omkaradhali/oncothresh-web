@@ -77,6 +77,36 @@ export interface DecisionCurveResult {
   net_benefit_all: number[];
 }
 
+// --- /bootstrap-ci -----------------------------------------------------------
+
+/** A point estimate for one metric with its bootstrap confidence interval. */
+export interface CIEstimate {
+  estimate: number;
+  lower: number;
+  upper: number;
+  /** The interval's confidence level, echoed back per metric (e.g. 0.95). */
+  confidence: number;
+}
+
+/**
+ * Bootstrap confidence intervals for every classification metric at one threshold.
+ * Each metric field carries its own estimate and interval, ready for a forest plot.
+ */
+export interface BootstrapResult {
+  threshold: number;
+  n_bootstrap: number;
+  confidence: number;
+  /** Interval method the library used, e.g. "bca" (bias-corrected accelerated). */
+  method: string;
+  sensitivity: CIEstimate;
+  specificity: CIEstimate;
+  ppv: CIEstimate;
+  npv: CIEstimate;
+  f1: CIEstimate;
+  mcc: CIEstimate;
+  accuracy: CIEstimate;
+}
+
 // --- /multi-threshold-report -------------------------------------------------
 
 /** The same classification metrics computed at each of several thresholds, for a sweep chart. */
