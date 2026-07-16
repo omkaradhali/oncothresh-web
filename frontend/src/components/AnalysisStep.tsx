@@ -16,13 +16,20 @@ import CalibrationPanel from "./CalibrationPanel";
 import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
 import MultiThresholdPanel from "./MultiThresholdPanel";
+import NNTPanel from "./NNTPanel";
 import SensitivityPanel from "./SensitivityPanel";
 
 // Fallback example when a deployment hasn't configured a domain-specific one.
 const GENERIC_EXAMPLE =
   "For instance, a 0.20 cutoff flags every sample scoring at or above 20%.";
 
-type TabId = "sensitivity" | "metrics-sweep" | "calibration" | "decision-curve" | "bootstrap-ci";
+type TabId =
+  | "sensitivity"
+  | "metrics-sweep"
+  | "calibration"
+  | "decision-curve"
+  | "bootstrap-ci"
+  | "nnt";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "sensitivity", label: "Threshold sensitivity" },
@@ -30,6 +37,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "calibration", label: "Calibration" },
   { id: "decision-curve", label: "Decision curve" },
   { id: "bootstrap-ci", label: "Confidence intervals" },
+  { id: "nnt", label: "Number needed to test" },
 ];
 
 interface Props {
@@ -143,6 +151,7 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
           </section>
 
           <section className="card">
+            <p className="tabs-label">Detailed analyses</p>
             <div className="tabs" role="tablist">
               {TABS.map((tab) => (
                 <button
@@ -182,6 +191,11 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {visited.has("bootstrap-ci") && (
               <div className="tabpanel" hidden={activeTab !== "bootstrap-ci"} role="tabpanel">
                 <BootstrapPanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("nnt") && (
+              <div className="tabpanel" hidden={activeTab !== "nnt"} role="tabpanel">
+                <NNTPanel arrays={arrays} threshold={metrics.threshold} />
               </div>
             )}
           </section>

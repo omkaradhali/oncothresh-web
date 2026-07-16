@@ -145,11 +145,22 @@ h3 {
 
 /* --- results tabs --------------------------------------------------------- */
 
+/* Small caption above the strip so it reads as "pick an analysis", not stray buttons. */
+.tabs-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Segmented pills: each tab is a self-contained chip, so the strip stays legible when it
+   wraps to a second row (underline tabs break on wrap — only the last row gets underlined). */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  border-bottom: 1px solid var(--border);
+  gap: 0.4rem;
   margin-bottom: 1.25rem;
 }
 
@@ -158,25 +169,29 @@ h3 {
   font: inherit;
   font-weight: 500;
   font-size: 0.9rem;
-  padding: 0.5rem 0.9rem;
-  background: transparent;
+  padding: 0.45rem 0.95rem;
+  background: var(--surface);
   color: var(--text-muted);
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  margin-bottom: -1px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
   cursor: pointer;
-  transition: color 0.12s ease, border-color 0.12s ease;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 
-.tabs .tab:hover:not(:disabled) {
-  background: transparent;
+/* Hover on an inactive pill stays neutral, so it never previews as the (blue-tinted) active state. */
+.tabs .tab:hover:not(:disabled):not(.active) {
+  background: var(--bg);
   color: var(--text);
+  border-color: var(--text-muted);
 }
 
+/* Active tab is a soft blue-tinted pill, not a solid fill — that keeps it quieter than the solid
+   accent "Evaluate" button, so selection state and the primary action don't read as the same thing. */
 .tabs .tab.active {
+  background: var(--accent-soft);
   color: var(--accent);
-  border-bottom-color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
 /* Reserve room for a chart so a tab's brief "Computing…" state can't collapse the panel.
