@@ -194,6 +194,49 @@ h3 {
   font-weight: 600;
 }
 
+/* --- model comparison chips ----------------------------------------------- */
+.model-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+/* The loaded dataset's model reads as fixed (it can't be removed), so tint it as the anchor. */
+.model-chip-primary {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.model-chip-remove {
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.model-chip-remove:hover {
+  color: var(--danger);
+}
+
 /* Reserve room for a chart so a tab's brief "Computing…" state can't collapse the panel.
    Without this the document shrinks on a tab's first open, the browser clamps the scroll
    position toward the top, and the chart lands off-screen when it finishes loading. */

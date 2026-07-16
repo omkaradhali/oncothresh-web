@@ -6,6 +6,7 @@
  */
 
 import { useState } from "react";
+import type { DatasetSource } from "./api/client";
 import type { ParsedDataset, ResponseMeta } from "./api/types";
 import AnalysisStep from "./components/AnalysisStep";
 import DataStep from "./components/DataStep";
@@ -13,6 +14,7 @@ import ProvenanceFooter from "./components/ProvenanceFooter";
 
 export default function App() {
   const [dataset, setDataset] = useState<ParsedDataset | null>(null);
+  const [source, setSource] = useState<DatasetSource | null>(null);
   const [meta, setMeta] = useState<ResponseMeta | null>(null);
 
   return (
@@ -53,17 +55,24 @@ export default function App() {
         )}
       </header>
 
-      {dataset ? (
+      {dataset && source ? (
         <AnalysisStep
           dataset={dataset}
+          source={source}
           onMeta={setMeta}
           onReset={() => {
             setDataset(null);
+            setSource(null);
             setMeta(null);
           }}
         />
       ) : (
-        <DataStep onParsed={setDataset} />
+        <DataStep
+          onParsed={(d, s) => {
+            setDataset(d);
+            setSource(s);
+          }}
+        />
       )}
 
       <ProvenanceFooter meta={meta} />

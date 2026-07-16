@@ -10,7 +10,9 @@ import type {
   ApiResponse,
   BootstrapResult,
   BoundaryCalibrationResult,
+  CompareModelsResult,
   DecisionCurveResult,
+  ModelInput,
   MultiThresholdReport,
   NNTResult,
   ParsedDataset,
@@ -104,6 +106,17 @@ export interface DatasetArrays {
   y_pred: number[];
 }
 
+/**
+ * The original upload, retained so the Compare tab can pull in a second model: it re-parses a
+ * sibling prediction column from the same file through the same server parser, guaranteeing the
+ * extra model is aligned to the identical rows and ground truth as the loaded one.
+ */
+export interface DatasetSource {
+  file: File;
+  yTrueCol: string;
+  yPredCol: string;
+}
+
 export function evaluate(
   data: DatasetArrays,
   threshold: number,
@@ -147,6 +160,15 @@ export function bootstrapCi(
     n_bootstrap: nBootstrap,
     confidence,
   });
+}
+
+export function compareModels(
+  yTrue: number[],
+  models: ModelInput[],
+  threshold: number,
+): Promise<ApiResponse<CompareModelsResult>> {
+  // Every model shares one y_true (same test set); each brings its own y_pred column.
+  return postJson<CompareModelsResult>("/compare-models", { y_true: yTrue, models, threshold });
 }
 
 export function nnt(data: DatasetArrays, threshold: number): Promise<ApiResponse<NNTResult>> {

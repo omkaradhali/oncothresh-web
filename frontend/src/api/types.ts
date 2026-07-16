@@ -137,6 +137,24 @@ export interface MultiThresholdReport {
   results: ThresholdResult[];
 }
 
+// --- /compare-models ---------------------------------------------------------
+
+/** One model in a comparison: its predictions over the shared test set, plus an optional name. */
+export interface ModelInput {
+  y_pred: number[];
+  name?: string;
+}
+
+/**
+ * Several models evaluated at one threshold on the same ground truth. `results[i]` holds the full
+ * classification metrics for `model_names[i]`, so the two arrays are read together, in order.
+ */
+export interface CompareModelsResult {
+  threshold: number;
+  model_names: string[];
+  results: ThresholdResult[];
+}
+
 // --- /boundary-calibration ---------------------------------------------------
 
 /**

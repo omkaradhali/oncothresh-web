@@ -6,11 +6,11 @@
  */
 
 import { useState } from "react";
-import { ApiError, parseCsv, peekCsvHeader } from "../api/client";
+import { ApiError, parseCsv, peekCsvHeader, type DatasetSource } from "../api/client";
 import type { ParsedDataset } from "../api/types";
 
 interface Props {
-  onParsed: (dataset: ParsedDataset) => void;
+  onParsed: (dataset: ParsedDataset, source: DatasetSource) => void;
 }
 
 export default function DataStep({ onParsed }: Props) {
@@ -43,7 +43,9 @@ export default function DataStep({ onParsed }: Props) {
     setError(null);
     try {
       const res = await parseCsv(file, yTrueCol, yPredCol);
-      onParsed(res.data);
+      // Retain the file + column choices so the Compare tab can add a second model from a
+      // sibling column without a re-upload.
+      onParsed(res.data, { file, yTrueCol, yPredCol });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to parse the CSV.");
     } finally {
