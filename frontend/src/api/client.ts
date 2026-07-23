@@ -12,6 +12,7 @@ import type {
   BoundaryCalibrationResult,
   DecisionCurveResult,
   MultiThresholdReport,
+  NNTResult,
   ParsedDataset,
   ResponseMeta,
   ThresholdResult,
@@ -146,6 +147,11 @@ export function bootstrapCi(
     n_bootstrap: nBootstrap,
     confidence,
   });
+}
+
+export function nnt(data: DatasetArrays, threshold: number): Promise<ApiResponse<NNTResult>> {
+  // Number Needed to Test at this one threshold: 1/PPV for positives, 1/(1-NPV) for negatives.
+  return postJson<NNTResult>("/nnt", { ...data, threshold });
 }
 
 export function boundaryCalibration(

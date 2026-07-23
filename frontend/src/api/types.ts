@@ -107,6 +107,29 @@ export interface BootstrapResult {
   accuracy: CIEstimate;
 }
 
+// --- /nnt --------------------------------------------------------------------
+
+/**
+ * Number Needed to Test at one clinical threshold — the diagnostic analogue of NNT-to-treat.
+ *
+ * `nnt_positive` (1/PPV) and `nnt_negative` (1/(1-NPV)) are `null` when the underlying rate makes
+ * them infinite, because the backend serialises `float('inf')` as JSON `null`. The two nulls mean
+ * opposite things clinically: `nnt_positive === null` (PPV=0) is bad — every positive call is
+ * wrong; `nnt_negative === null` (NPV=1) is good — no cleared sample hides a missed case.
+ */
+export interface NNTResult {
+  threshold: number;
+  /** Model-positive calls needed to find one true positive (1/PPV). Lower is better. null = ∞ (PPV=0). */
+  nnt_positive: number | null;
+  /** Model-negative calls needed to encounter one missed true positive (1/(1-NPV)). Higher is safer. null = ∞ (NPV=1). */
+  nnt_negative: number | null;
+  ppv: number;
+  npv: number;
+  n_positive: number;
+  n_negative: number;
+  n_total: number;
+}
+
 // --- /multi-threshold-report -------------------------------------------------
 
 /** The same classification metrics computed at each of several thresholds, for a sweep chart. */
