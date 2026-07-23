@@ -8,11 +8,12 @@
  */
 
 import { useMemo, useState } from "react";
-import { ApiError, evaluate, type DatasetArrays } from "../api/client";
+import { ApiError, evaluate, type DatasetArrays, type DatasetSource } from "../api/client";
 import type { ParsedDataset, ResponseMeta, ThresholdResult } from "../api/types";
 import { domain, formatPercentReadout } from "../config";
 import BootstrapPanel from "./BootstrapPanel";
 import CalibrationPanel from "./CalibrationPanel";
+import CompareModelsPanel from "./CompareModelsPanel";
 import DecisionCurvePanel from "./DecisionCurvePanel";
 import MetricsPanel from "./MetricsPanel";
 import MultiThresholdPanel from "./MultiThresholdPanel";
@@ -29,7 +30,8 @@ type TabId =
   | "calibration"
   | "decision-curve"
   | "bootstrap-ci"
-  | "nnt";
+  | "nnt"
+  | "compare-models";
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "sensitivity", label: "Threshold sensitivity" },
@@ -38,15 +40,17 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "decision-curve", label: "Decision curve" },
   { id: "bootstrap-ci", label: "Confidence intervals" },
   { id: "nnt", label: "Number needed to test" },
+  { id: "compare-models", label: "Compare models" },
 ];
 
 interface Props {
   dataset: ParsedDataset;
+  source: DatasetSource;
   onMeta: (meta: ResponseMeta) => void;
   onReset: () => void;
 }
 
-export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
+export default function AnalysisStep({ dataset, source, onMeta, onReset }: Props) {
   const [threshold, setThreshold] = useState(0.2);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -196,6 +200,15 @@ export default function AnalysisStep({ dataset, onMeta, onReset }: Props) {
             {visited.has("nnt") && (
               <div className="tabpanel" hidden={activeTab !== "nnt"} role="tabpanel">
                 <NNTPanel arrays={arrays} threshold={metrics.threshold} />
+              </div>
+            )}
+            {visited.has("compare-models") && (
+              <div className="tabpanel" hidden={activeTab !== "compare-models"} role="tabpanel">
+                <CompareModelsPanel
+                  dataset={dataset}
+                  source={source}
+                  threshold={metrics.threshold}
+                />
               </div>
             )}
           </section>
